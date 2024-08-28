@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Cat, CatType } from "./app.model";
+import catsRouter from "./cats/cats.route";
 
 const app: express.Express = express();
 
@@ -11,26 +11,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// 이렇게 하면 som 요청시 먼저 여기를 거치고 뒤에 som을 실행
-app.get("/cats/som", (req, res, next) => {
-  console.log("this is som middleware");
-  next();
-});
+//* json middleware
+app.use(express.json());
+
+app.use(catsRouter);
 
 const port: number = 8000;
 
 app.get("/", (req: express.Request, res: express.Response) => {
-  res.send({ cats: Cat });
+  res.send("hello world");
 });
 
-app.get("/cats/blue", (req: express.Request, res: express.Response) => {
-  res.send({ blue: Cat[0] });
-});
-
-app.get("/cats/som", (req: express.Request, res: express.Response) => {
-  res.send({ som: Cat[1] });
-});
-
+// 404 미들웨어
 app.use((req, res, next) => {
   console.log("this is error middleware");
   res.send({ error: "404 not found error" });
